@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/rickardlofberg/adventofcode2024/pkg/util"
-
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,13 +16,13 @@ func main() {
 
 	app := &cli.App{
 		Name:  "Advent of code 2024",
-		Usage: "Solutions to the problems posed by advent of code 2024!",
+		Usage: "Solutions to the problems posed by advent of code 2021!",
 		Action: func(c *cli.Context) error {
 			if day < 1 || day > 25 {
-				return errors.New("Day need to be set to between 1 and 25")
+				return errors.New("day need to be set to between 1 and 25")
 			}
 			if part < 1 || part > 2 {
-				return errors.New("Part can only be set to 1 or 2")
+				return errors.New("part can only be set to 1 or 2")
 			}
 
 			answer, err := util.SolveProblem(day, part)
