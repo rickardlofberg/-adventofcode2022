@@ -1,4 +1,4 @@
-package dayX
+package day1
 
 import (
 	"errors"
