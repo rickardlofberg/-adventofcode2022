@@ -16,8 +16,8 @@ func main() {
 	var part int
 
 	app := &cli.App{
-		Name:  "Advent of code 2021",
-		Usage: "Solutions to the problems posed by advent of code 2021!",
+		Name:  "Advent of code 2024",
+		Usage: "Solutions to the problems posed by advent of code 2024!",
 		Action: func(c *cli.Context) error {
 			if day < 1 || day > 25 {
 				return errors.New("Day need to be set to between 1 and 25")
