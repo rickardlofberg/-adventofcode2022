@@ -6,10 +6,13 @@ import (
 
 type fn func([]string) (int64, error)
 
-func GetSolver(problem string) fn {
-	var solvers = map[string]fn{
-		"1.1": day1.Part1,
-		"1.2": day1.Part2,
+func GetSolver(day int, part int) fn {
+	switch true {
+	case day == 1 && part == 1:
+		return day1.Part1
+	case day == 1 && part == 2:
+		return day1.Part2
+	default:
+		return nil
 	}
-	return solvers[problem]
 }
