@@ -3,6 +3,7 @@ package util
 import (
 	"github.com/rickardlofberg/adventofcode2024/pkg/day1"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day2"
+	"github.com/rickardlofberg/adventofcode2024/pkg/day3"
 )
 
 type fn func([]string) (int64, error)
@@ -17,6 +18,10 @@ func GetSolver(day int, part int) fn {
 		return day2.Part1
 	case day == 2 && part == 2:
 		return day2.Part2
+	case day == 3 && part == 1:
+		return day3.Part1
+	case day == 3 && part == 2:
+		return day3.Part2
 	default:
 		return nil
 	}
