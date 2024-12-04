@@ -6,15 +6,15 @@ type direction struct {
 }
 
 var searchDirections = []direction{
-	direction{x: 0, y: -1},
-	direction{x: 0, y: 0},
-	direction{x: 0, y: 1},
-	direction{x: 1, y: -1},
-	direction{x: 1, y: 0},
-	direction{x: 1, y: 1},
-	direction{x: -1, y: -1},
-	direction{x: -1, y: 0},
-	direction{x: -1, y: 1},
+	{x: 0, y: -1},
+	{x: 0, y: 0},
+	{x: 0, y: 1},
+	{x: 1, y: -1},
+	{x: 1, y: 0},
+	{x: 1, y: 1},
+	{x: -1, y: -1},
+	{x: -1, y: 0},
+	{x: -1, y: 1},
 }
 
 func InputToArray(input []string) [][]string {
