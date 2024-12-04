@@ -1,270 +1,88 @@
 package day2
 
 import (
-	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 )
 
-func abs(i int64) int64 {
-	if i < 0 {
-		return i * -1
+func StringToInt64OrPanic(s string) int64 {
+	number, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(err)
 	}
-	return i
+	return number
 }
 
-type Direction string
-
-const (
-	Increase Direction = "increase"
-	Decrease Direction = "decrease"
-	Same     Direction = "same"
-)
-
-func GetDirection(first int64, second int64) Direction {
-	if first < second {
-		return Increase
-	} else if first > second {
-		return Decrease
-	} else {
-		return Same
+func ToInts64OrPanic(row []string) []int64 {
+	var integers []int64
+	for _, s := range row {
+		integer := StringToInt64OrPanic(s)
+		integers = append(integers, integer)
 	}
+	return integers
 }
 
-func IsValidDirection(directions map[Direction]int64, direction Direction) bool {
-	switch direction {
-	case Same:
-		return false
-	case Increase:
-		if directions[Decrease] > 0 {
+func GetVariations(numbers []int64) [][]int64 {
+	result := make([][]int64, len(numbers)+1)
+	result[0] = numbers
+	for idx := range numbers {
+		var newNumbers []int64
+		if idx == 0 {
+			newNumbers = numbers[idx+1:]
+		} else if idx == len(numbers)-1 {
+			newNumbers = numbers[:idx]
+		} else {
+			right := numbers[:idx]
+			left := numbers[idx+1:]
+			newNumbers = slices.Concat(right, left)
+		}
+		result[idx+1] = newNumbers
+	}
+	return result
+}
+
+func IsValid(integers []int64, minStep int64, maxStep int64) bool {
+	isAscending := integers[0] < integers[1]
+	var length int64 = 0
+
+	for idx, number := range integers[1:] {
+		prevNumber := integers[idx]
+
+		if isAscending {
+			length = number - prevNumber
+		} else {
+			length = prevNumber - number
+		}
+		if !(length >= minStep && length <= maxStep) {
 			return false
 		}
-	case Decrease:
-		if directions[Increase] > 0 {
-			return false
-		}
 	}
 	return true
-}
-
-func IsAllowedDifference(first int64, second int64, minStep int64, maxStep int64, direction Direction) bool {
-	var difference int64 = 0
-	switch direction {
-	case Same:
-		return false
-	case Increase:
-		difference = second - first
-	case Decrease:
-		difference = first - second
-	}
-	if difference < minStep {
-		return false
-	}
-	if difference > maxStep {
-		return false
-	}
-	return true
-}
-
-type edge struct {
-	start     int64
-	end       int64
-	direction Direction
-	length    int64
-}
-
-func (e edge) HasValidLength(min int64, max int64) bool {
-	var abs_length = abs(e.length)
-	if abs_length < min {
-		return false
-	}
-	if abs_length > max {
-		return false
-	}
-	return true
-}
-
-func GetEdgesDirections(edges []edge) map[Direction]int64 {
-	directions := make(map[Direction]int64)
-	for idx := range edges {
-		edge := edges[idx]
-		directions[edge.direction] += 1
-	}
-	return directions
-}
-
-func GetEdges(integers []string) ([]edge, error) {
-	var previous int64 = -1
-	var edges []edge
-	for idx := range len(integers) {
-		current, err := strconv.ParseInt(integers[idx], 10, 64)
-		if err != nil {
-			return nil, errors.New("bad integer")
-		}
-		if previous == -1 {
-			previous = current
-			continue
-		}
-		var direction = GetDirection(previous, current)
-		var length = current - previous
-		var edge = edge{start: previous, end: current, direction: direction, length: length}
-		edges = append(edges, edge)
-		previous = current
-	}
-	return edges, nil
-}
-
-func MergeEdges(firstEdge edge, secondEdge edge) edge {
-	start := firstEdge.end
-	end := secondEdge.end
-	direction := GetDirection(start, end)
-	length := end - start
-	return edge{start: start, end: end, direction: direction, length: length}
-}
-
-func FilterEdgesWithValue(edges []edge, min int64, max int64) []edge {
-	var new_edges []edge
-	var skip bool = false
-	for idx := range len(edges) {
-		var is_start = idx == 0
-		var is_end = idx == len(edges)-1
-		var edge = edges[idx]
-
-		if skip {
-			skip = false
-			continue
-		}
-
-		// To remove
-		if !edge.HasValidLength(min, max) {
-			// Start and finish can just be removed
-			if is_start || is_end {
-				continue
-			}
-			previous_edge := edges[idx-1]
-			next_edge := edges[idx+1]
-			edge = MergeEdges(previous_edge, next_edge)
-			skip = true
-		}
-		new_edges = append(new_edges, edge)
-	}
-	return new_edges
-
-}
-
-func FilterEdgesWithDirection(edges []edge, direction Direction) []edge {
-	var new_edges []edge
-	var skip bool = false
-	for idx := range len(edges) {
-		var is_start = idx == 0
-		var is_end = idx == len(edges)-1
-		var edge = edges[idx]
-
-		if skip {
-			skip = false
-			continue
-		}
-
-		// To remove
-		if edge.direction == direction || edge.direction == Same {
-			// Start and finish can just be removed
-			if is_start || is_end {
-				continue
-			}
-			previous_edge := edges[idx-1]
-			next_edge := edges[idx+1]
-			edge = MergeEdges(previous_edge, next_edge)
-			skip = true
-		}
-		new_edges = append(new_edges, edge)
-	}
-	return new_edges
-}
-
-func IsSafeLevel(row string, minStep int64, maxStep int64, tolerance int64) (bool, error) {
-	integers := strings.Fields(row)
-	edges, _ := GetEdges(integers)
-	directions := GetEdgesDirections(edges)
-
-	if directions[Same] > tolerance {
-		return false, nil
-	}
-
-	var minorityDirection Direction
-	if directions[Increase] > directions[Decrease] {
-		minorityDirection = Decrease
-	} else {
-		minorityDirection = Increase
-	}
-
-	if directions[minorityDirection] > tolerance {
-		return false, nil
-	}
-	edges_before := int64(len(edges))
-	edges = FilterEdgesWithDirection(edges, minorityDirection)
-	changes := edges_before - int64(len(edges))
-	if tolerance > changes {
-		edges = FilterEdgesWithValue(edges, minStep, maxStep)
-	}
-
-	changes = edges_before - int64(len(edges))
-	if changes > tolerance {
-		return false, nil
-	}
-
-	for idx := range edges {
-		edge := edges[idx]
-		if !edge.HasValidLength(minStep, maxStep) {
-			return false, nil
-		}
-	}
-	return true, nil
 }
 
 func IsSafeLevel2(row string, minStep int64, maxStep int64, tolerance int64) (bool, error) {
-	integers := strings.Fields(row)
-	directions := make(map[Direction]int64)
-	var differences int64 = 0
-	var first int64 = -1
-	var second int64
-	for idx := range len(integers) {
-		current, err := strconv.ParseInt(integers[idx], 10, 64)
-		if err != nil {
-			return false, errors.New("bad integer")
+	numbers := strings.Fields(row)
+	integers := ToInts64OrPanic(numbers)
+	// fmt.Println(integers)
+	variations := GetVariations(integers)
+	// fmt.Println(variations)
+	fmt.Println()
+	for _, variation := range variations {
+		isValid := IsValid(variation, minStep, maxStep)
+		if isValid {
+			return true, nil
 		}
-
-		if first == -1 {
-			first = current
-			continue
-		}
-		second = current
-
-		var direction = GetDirection(first, second)
-		var allowedDifference = IsAllowedDifference(first, second, minStep, maxStep, direction)
-		var allowedDirection = IsValidDirection(directions, direction)
-
-		if !allowedDirection {
-			fmt.Println(allowedDirection)
-		}
-
-		if !allowedDifference || !allowedDirection {
-			differences += 1
-			if differences > tolerance {
-				fmt.Println("Too many differences exit")
-				return false, nil
-			} else {
-				continue
-			}
-		} else {
-			directions[direction] += 1
-		}
-
-		first = second
 	}
+	return false, nil
+}
 
-	fmt.Println("All good")
-	return true, nil
+func IsSafeLevel(row string, minStep int64, maxStep int64, tolerance int64) (bool, error) {
+	numbers := strings.Fields(row)
+	integers := ToInts64OrPanic(numbers)
+	isValid := IsValid(integers, minStep, maxStep)
+	return isValid, nil
 }
 
 func Part1(input []string) (int64, error) {
@@ -285,7 +103,7 @@ func Part2(input []string) (int64, error) {
 	var minStep int64 = 1
 	var maxStep int64 = 3
 	for _, row := range input {
-		var isSafe, _ = IsSafeLevel(row, minStep, maxStep, 1)
+		var isSafe, _ = IsSafeLevel2(row, minStep, maxStep, 1)
 		if isSafe {
 			safeLevels += 1
 		}
