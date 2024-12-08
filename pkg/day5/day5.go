@@ -73,11 +73,22 @@ func RemoveFirstInstance(pages []string, toRemove string) []string {
 	return newPages
 }
 
+func HaveSeenAllPages(expected []string, existing []string) (string, bool) {
+	for _, expect := range expected {
+		exists := slices.Contains(existing, expect)
+		if !exists {
+			return expect, false
+		}
+	}
+	return "", true
+}
+
+// func MovePageForward(pages []string, pageToMove string, )
+
 func FixPage(rules map[string][]string, pages []string) []string {
 	result := CheckPage(rules, pages)
-	isValid := 0 != result
+	isValid := result != 0
 	if isValid {
-		// fmt.Println("Good", pages)
 		return pages
 	}
 
@@ -85,21 +96,19 @@ func FixPage(rules map[string][]string, pages []string) []string {
 	newPages := []string{}
 	for idx, page := range pages {
 		mustHaveSeen := rules[page]
-		for _, b := range mustHaveSeen {
-			seen := slices.Contains(hasSeen, b)
-			if !seen {
-				// Add expected page in front
-				newPages = append(newPages, b)
-				// Add next page after (according to rule)
-				newPages = append(newPages, page)
+		unseenPage, seen := HaveSeenAllPages(mustHaveSeen, hasSeen)
+		if !seen {
+			// Add expected page in front
+			newPages = append(newPages, unseenPage)
+			// Add next page after (according to rule)
+			newPages = append(newPages, page)
 
-				// Remove the bad page from remaining part
-				removedBadPage := RemoveFirstInstance(pages[idx+1:], b)
-				newPages := slices.Concat(newPages, removedBadPage)
+			// Remove the bad page from remaining part
+			removedBadPage := RemoveFirstInstance(pages[idx+1:], unseenPage)
+			newPages := slices.Concat(newPages, removedBadPage)
 
-				// Recursivly fix
-				return FixPage(rules, newPages)
-			}
+			// Recursivly fix
+			return FixPage(rules, newPages)
 		}
 		hasSeen = append(hasSeen, page)
 	}
