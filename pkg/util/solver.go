@@ -7,7 +7,8 @@ import (
 	"github.com/rickardlofberg/adventofcode2024/pkg/day4"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day5"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day6"
-	day7 "github.com/rickardlofberg/adventofcode2024/pkg/day_7"
+	"github.com/rickardlofberg/adventofcode2024/pkg/day7"
+	"github.com/rickardlofberg/adventofcode2024/pkg/day8"
 )
 
 type fn func([]string) (int64, error)
@@ -42,6 +43,10 @@ func GetSolver(day int, part int) fn {
 		return day7.Part1
 	case day == 7 && part == 2:
 		return day7.Part2
+	case day == 8 && part == 1:
+		return day8.Part1
+	case day == 8 && part == 2:
+		return day8.Part2
 	default:
 		return nil
 	}
