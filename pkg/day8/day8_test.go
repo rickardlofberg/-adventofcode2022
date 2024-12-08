@@ -1,9 +1,26 @@
 package day8
 
 import (
-	"os"
+	"fmt"
+	"slices"
 	"testing"
 )
+
+func TestGetAntiNodes(t *testing.T) {
+	n1 := coordinate{x: 1, y: 1}
+	n2 := coordinate{x: 3, y: 3}
+	expectedResult := []coordinate{
+		{x: -1, y: -1},
+		{x: 5, y: 5},
+	}
+	result := GetAntiNodes(n1, n2)
+
+	if !slices.Equal(result, expectedResult) {
+		fmt.Println(result, "!=", expectedResult)
+		t.Fatalf("Getting nodes wrong")
+
+	}
+}
 
 func TestPart1(t *testing.T) {
 	testInput := []string{
@@ -20,7 +37,7 @@ func TestPart1(t *testing.T) {
 		"............",
 		"............",
 	}
-	var expectedResult int64 = 14
+	var expectedResult int64 = 13
 
 	result, err := Part1(testInput)
 
@@ -34,12 +51,21 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	if os.Getenv("RUN_TEMPLATE") != "true" {
-		t.Skip("Skipping template test.")
+	testInput := []string{
+		"............",
+		"........0...",
+		".....0......",
+		".......0....",
+		"....0.......",
+		"......A.....",
+		"............",
+		"............",
+		"........A...",
+		".........A..",
+		"............",
+		"............",
 	}
-
-	testInput := []string{}
-	var expectedResult int64 = 0
+	var expectedResult int64 = 34
 
 	result, err := Part2(testInput)
 
