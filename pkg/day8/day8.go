@@ -177,11 +177,7 @@ func GetAllowedAntiNodes(bounds bounds, occupiedCells []coordinate, antiNodes []
 		if !inBounds {
 			continue
 		}
-		isOccupied := slices.Contains(occupiedCells, node)
-		if !isOccupied {
-			result += 1
-			occupiedCells = append(occupiedCells, node)
-		}
+		result += 1
 	}
 	return result
 }

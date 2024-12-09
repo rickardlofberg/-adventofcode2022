@@ -37,7 +37,7 @@ func TestPart1(t *testing.T) {
 		"............",
 		"............",
 	}
-	var expectedResult int64 = 13
+	var expectedResult int64 = 14
 
 	result, err := Part1(testInput)
 
