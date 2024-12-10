@@ -1,7 +1,6 @@
 package day9
 
 import (
-	"os"
 	"testing"
 )
 
@@ -21,12 +20,8 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	if os.Getenv("RUN_TEMPLATE") != "true" {
-		t.Skip("Skipping template test.")
-	}
-
-	testInput := []string{}
-	var expectedResult int64 = 0
+	testInput := []string{"2333133121414131402"}
+	var expectedResult int64 = 2858
 
 	result, err := Part2(testInput)
 
