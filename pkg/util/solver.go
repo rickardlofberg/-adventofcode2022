@@ -6,6 +6,7 @@ import (
 	"github.com/rickardlofberg/adventofcode2024/pkg/day11"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day12"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day13"
+	"github.com/rickardlofberg/adventofcode2024/pkg/day14"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day2"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day3"
 	"github.com/rickardlofberg/adventofcode2024/pkg/day4"
@@ -72,6 +73,10 @@ func GetSolver(day int, part int) fn {
 		return day13.Part1
 	case day == 13 && part == 2:
 		return day13.Part2
+	case day == 14 && part == 1:
+		return day14.Part1
+	case day == 14 && part == 2:
+		return day14.Part2
 	default:
 		return nil
 	}

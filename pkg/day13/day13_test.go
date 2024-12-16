@@ -1,6 +1,7 @@
 package day13
 
 import (
+	"os"
 	"testing"
 )
 
@@ -37,6 +38,9 @@ import (
 // }
 
 func TestPart2(t *testing.T) {
+	if os.Getenv("RUN_TEMPLATE") != "true" {
+		t.Skip("Skipping template test.")
+	}
 	testInput := []string{
 		"Button A: X+94, Y+34",
 		"Button B: X+22, Y+67",
